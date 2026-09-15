@@ -1,4 +1,7 @@
 using PostService.Models;
+using PostService.Dtos;
+using PostService.Mappings;
+using PostService.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,85 +11,53 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddScoped<IPostingService, PostingService>();
+
 var app = builder.Build();
 
-var postings = new List<Posting>
+app.MapGet("/postings", (IPostingService postingService) =>
 {
-    new Posting
-    {
-        Id = 1,
-        From = "Alice",
-        To = "Bob",
-        Content = "Books",
-        DeliveryType = DeliveryType.Courier,
-        Weight = 2.5f,
-        Width = 30,
-        Height = 20,
-        Depth = 10,
-        Value = 50.0f,
-        Price = 10.0f,
-        CreatedAt = DateTime.UtcNow
-    },
-    new Posting
-    {
-        Id = 2,
-        From = "Ivan",
-        To = "Olena",
-        Content = "Documents",
-        DeliveryType = DeliveryType.ExpressCourier,
-        Weight = 0.5f,
-        Width = 25,
-        Height = 15,
-        Depth = 2,
-        Value = 100.0f,
-        Price = 25.0f,
-        CreatedAt = DateTime.UtcNow
-    }
-};
-
-app.MapGet("/postings", () => postings);
-
-app.MapGet("/postings/{id}", (int id) =>
-{
-    var posting = postings.FirstOrDefault(p => p.Id == id);
-    return posting is null ? Results.NotFound() : Results.Ok(posting);
+    var postings = postingService.GetAll();
+    var result = postings.Select(PostingMapper.ToPostingGetDto).ToList();
+    return Results.Ok(result);
 });
 
-app.MapPost("/postings", (Posting posting) =>
+app.MapGet("/postings/{id}", (int id, IPostingService postingService) =>
 {
-    posting.Id = postings.Count == 0 ? 1 : postings.Max(p => p.Id) + 1;
-    posting.CreatedAt = DateTime.UtcNow;
-    postings.Add(posting);
-    return Results.Created($"/postings/{posting.Id}", posting);
-});
-
-app.MapPut("/postings/{id}", (int id, Posting updated) =>
-{
-    var posting = postings.FirstOrDefault(p => p.Id == id);
+    var posting = postingService.Find(id);
     if (posting is null)
         return Results.NotFound();
 
-    posting.From = updated.From;
-    posting.To = updated.To;
-    posting.Content = updated.Content;
-    posting.DeliveryType = updated.DeliveryType;
-    posting.Weight = updated.Weight;
-    posting.Width = updated.Width;
-    posting.Height = updated.Height;
-    posting.Depth = updated.Depth;
-    posting.Value = updated.Value;
-    posting.Price = updated.Price;
-
-    return Results.Ok(posting);
+    var resultDto = PostingMapper.ToPostingGetDto(posting);
+    return Results.Ok(resultDto);
 });
 
-app.MapDelete("/postings/{id}", (int id) =>
+app.MapPost("/postings", (PostingPostDto postDto, IPostingService postingService) =>
 {
-    var posting = postings.FirstOrDefault(p => p.Id == id);
-    if (posting is null)
+    var newPosting = PostingMapper.ToPosting(postDto);
+    var savedObject = postingService.Create(newPosting);
+    var resultDto = PostingMapper.ToPostingGetDto(savedObject);
+    return Results.Created($"/postings/{resultDto.Id}", resultDto);
+});
+
+app.MapPut("/postings/{id}", (int id, PostingPutDto putDto, IPostingService postingService) =>
+{
+    putDto.Id = id;
+    var posting = PostingMapper.ToPosting(putDto);
+    var updated = postingService.Update(posting);
+    if (updated is null)
         return Results.NotFound();
 
-    postings.Remove(posting);
+    var resultDto = PostingMapper.ToPostingGetDto(updated);
+    return Results.Ok(resultDto);
+});
+
+app.MapDelete("/postings/{id}", (int id, IPostingService postingService) =>
+{
+    var deletedCount = postingService.Delete(id);
+    if (deletedCount == 0)
+        return Results.NotFound();
+
     return Results.NoContent();
 });
 
