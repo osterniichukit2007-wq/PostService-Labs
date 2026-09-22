@@ -1,6 +1,7 @@
 using PostService.Models;
+using PostService.CommonTypes;
 
-namespace PostService.Services;
+namespace PostService.BusinessLogic;
 
 public class PostingService : IPostingService
 {

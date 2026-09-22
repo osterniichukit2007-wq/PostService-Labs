@@ -1,13 +1,8 @@
-namespace PostService.Models;
+using PostService.CommonTypes;
 
-public enum DeliveryType
-{
-    Department,
-    Courier,
-    ExpressCourier
-}
+namespace PostService.Dtos;
 
-public class Posting
+public class PostingGetDto
 {
     public int Id { get; set; }
     public string From { get; set; } = string.Empty;

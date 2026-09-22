@@ -1,8 +1,8 @@
-using PostService.Models;
+using PostService.CommonTypes;
 
-namespace PostService.Dtos;
+namespace PostService.Models;
 
-public class PostingGetDto
+public class Posting
 {
     public int Id { get; set; }
     public string From { get; set; } = string.Empty;
