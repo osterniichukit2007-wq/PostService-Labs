@@ -3,7 +3,7 @@ using PostService.Dtos;
 
 namespace PostService.Mappings;
 
-public static class PostingMapper
+internal static class PostingMapper
 {
     public static Posting ToPosting(PostingPostDto dto)
     {
