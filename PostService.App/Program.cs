@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PostService.Models;
 using PostService.Dtos;
 using PostService.Mappings;
@@ -12,6 +13,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddDbContext<PostingDbContext>();
 builder.Services.AddScoped<IPostingService, PostingService>();
 builder.Services.AddScoped<IPostingRepository, PostingRepository>();
 
@@ -19,8 +21,8 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var repository = (PostingRepository)scope.ServiceProvider.GetRequiredService<IPostingRepository>();
-    repository.CreateDb();
+    var context = scope.ServiceProvider.GetRequiredService<PostingDbContext>();
+    context.Database.EnsureCreated();
 }
 
 app.MapGet("/postings", (IPostingService postingService) =>

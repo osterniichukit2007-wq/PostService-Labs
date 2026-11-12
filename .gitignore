@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 !PostService.App/
 PostService.App/PostingDb.db
+PostService.App/PostingDb.db-*
