@@ -1,4 +1,4 @@
-using PostService.Dtos;
+п»їusing PostService.Dtos;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,7 +38,7 @@ namespace PostService.Client
             }
             catch (HttpRequestException)
             {
-                MessageBox.Show("Не вдалося отримати дані з сервера. Перевірте, чи запущено PostService.");
+                MessageBox.Show("РќРµ РІРґР°Р»РѕСЃСЏ РѕС‚СЂРёРјР°С‚Рё РґР°РЅС– Р· СЃРµСЂРІРµСЂР°. РџРµСЂРµРІС–СЂС‚Рµ, С‡Рё Р·Р°РїСѓС‰РµРЅРѕ PostService.");
             }
         }
 
@@ -51,7 +51,7 @@ namespace PostService.Client
         {
             if (gridPostings.CurrentRow?.DataBoundItem is not PostingGetDto selectedPosting)
             {
-                MessageBox.Show("Виберіть відправлення, яке потрібно видалити.");
+                MessageBox.Show("Р’РёР±РµСЂС–С‚СЊ РІС–РґРїСЂР°РІР»РµРЅРЅСЏ, СЏРєРµ РїРѕС‚СЂС–Р±РЅРѕ РІРёРґР°Р»РёС‚Рё.");
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace PostService.Client
 
             if (!response.IsSuccessStatusCode)
             {
-                MessageBox.Show($"Не вдалося видалити відправлення. Сервер повернув статус {(int)response.StatusCode}.");
+                MessageBox.Show($"РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё РІС–РґРїСЂР°РІР»РµРЅРЅСЏ. РЎРµСЂРІРµСЂ РїРѕРІРµСЂРЅСѓРІ СЃС‚Р°С‚СѓСЃ {(int)response.StatusCode}.");
             }
 
             await LoadPostingsAsync();
