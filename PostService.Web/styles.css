@@ -1,0 +1,265 @@
+/* ===== PostService Web: спільні стилі (за макетами ПР-44) ===== */
+:root {
+  --bg: #f6f8fb;
+  --text: #1b2330;
+  --text-muted: #3d4756;
+  --accent: #1f5fbf;
+  --border: #d5dce8;
+  --input-border: #7a8699;
+  --error: #b3261e;
+  --error-bg: #fdeceb;
+  --error-text: #8c1d18;
+  --selected: #dce8fb;
+  --head-bg: #eef2f8;
+  --ok: #1e7a3c;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+a { text-decoration: none; color: var(--accent); }
+
+/* ----- Шапка і навігація ----- */
+.site-header {
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  position: relative;
+}
+.brand { font-size: 20px; font-weight: 700; color: var(--accent); }
+.nav { display: flex; gap: 32px; }
+.nav a {
+  color: var(--text);
+  padding: 20px 0 17px;
+  border-bottom: 3px solid transparent;
+}
+.nav a.active { font-weight: 600; border-bottom-color: var(--accent); }
+.menu-btn {
+  display: none;
+  width: 44px; height: 44px;
+  background: none; border: 0; padding: 0;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+/* ----- Основний блок ----- */
+main { padding: 32px 48px; }
+h1 { margin: 0 0 20px; font-size: 28px; }
+.lead { font-size: 17px; color: var(--text-muted); max-width: 720px; }
+
+/* ----- Кнопки ----- */
+.btn {
+  height: 44px;
+  padding: 0 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff;
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  font: inherit; font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { background: #f0f4fa; }
+.btn:focus-visible, input:focus-visible, select:focus-visible, .row:focus-visible, .card:focus-visible {
+  outline: 3px solid #9dbcf0; outline-offset: 1px;
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn-primary:hover:not(:disabled) { background: #1a52a6; }
+.btn-danger { border-color: var(--error); color: var(--error); }
+.btn-danger:hover:not(:disabled) { background: var(--error-bg); }
+.btn-danger-solid { background: var(--error); border-color: var(--error); color: #fff; font-weight: 600; }
+.btn-danger-solid:hover:not(:disabled) { background: #99201a; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ----- Головна: картки переходів ----- */
+.home-cards { display: flex; gap: 20px; margin-top: 28px; flex-wrap: wrap; }
+.home-card {
+  flex: 1 1 280px; max-width: 420px;
+  background: #fff; border: 1px solid var(--border); border-radius: 8px;
+  padding: 24px; color: var(--text);
+}
+.home-card:hover { border-color: var(--accent); }
+.home-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--accent); }
+.home-card p { margin: 0; color: var(--text-muted); }
+
+/* ----- Про програму ----- */
+.about-box {
+  background: #fff; border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 24px; max-width: 720px;
+}
+.about-box dl { margin: 0; }
+.about-box .item { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e6ebf3; }
+.about-box .item:last-child { border-bottom: 0; }
+.about-box dt { width: 180px; flex: none; font-weight: 600; }
+.about-box dd { margin: 0; }
+
+/* ----- Список: заголовок і панель дій ----- */
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.page-head h1 { margin: 0; }
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.toolbar .spacer { flex: 1; }
+.selected-info { font-size: 14px; color: var(--text-muted); }
+
+/* ----- Таблиця (широкий екран) ----- */
+.table {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+}
+.row, .thead {
+  display: grid;
+  grid-template-columns: 64px 1.4fr 1.4fr 1fr 1fr 90px 120px 1.2fr;
+  align-items: center;
+}
+.thead {
+  height: 46px; background: var(--head-bg);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600; font-size: 14px;
+}
+.row { min-height: 52px; border-bottom: 1px solid #e6ebf3; cursor: pointer; }
+.row:last-child { border-bottom: 0; }
+.row:hover { background: #f4f7fc; }
+.row.selected { background: var(--selected); box-shadow: inset 4px 0 0 var(--accent); font-weight: 600; }
+.row > div, .thead > div { padding: 0 16px; overflow-wrap: anywhere; }
+.empty, .loading { padding: 28px 16px; text-align: center; color: var(--text-muted); }
+
+/* Картки (вузький екран) — на широкому екрані сховані */
+.cards { display: none; flex-direction: column; gap: 12px; }
+.card {
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 12px 14px; font-size: 14px; line-height: 1.45; cursor: pointer;
+}
+.card .t { font-weight: 600; }
+.card .s { color: var(--text-muted); }
+.card.selected { background: var(--selected); border-color: var(--accent); border-left: 6px solid var(--accent); }
+.card.selected .t { font-weight: 700; }
+.card .chosen { display: none; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.card.selected .chosen { display: block; }
+
+/* ----- Форма ----- */
+.form-box { max-width: 1000px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 240px 380px 1fr;
+  gap: 8px 16px;
+  align-items: start;
+  margin-bottom: 14px;
+}
+.form-row label { font-weight: 600; padding-top: 11px; }
+input, select {
+  font: inherit; height: 44px; width: 100%;
+  border: 1px solid var(--input-border); border-radius: 6px;
+  background: #fff; color: var(--text); padding: 0 12px;
+}
+input[readonly] { background: #eef1f6; color: var(--text-muted); }
+input[aria-invalid="true"] { border: 2px solid var(--error); }
+.msg {
+  display: none; align-items: flex-start; gap: 6px;
+  color: var(--error); font-size: 14px; line-height: 1.3; padding-top: 12px;
+}
+.msg.show { display: flex; }
+.msg::before {
+  content: ""; flex: none; width: 16px; height: 16px; margin-top: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23b3261e'/%3E%3Crect x='7.2' y='3.5' width='1.6' height='5.5' fill='%23fff'/%3E%3Crect x='7.2' y='10.6' width='1.6' height='1.8' fill='%23fff'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+.req-note { font-size: 13px; color: var(--text-muted); margin: 8px 0 20px; }
+.form-actions { display: flex; gap: 12px; }
+
+.alert {
+  display: none; align-items: flex-start; gap: 8px;
+  background: var(--error-bg); border: 1px solid var(--error); border-radius: 6px;
+  padding: 10px 12px; color: var(--error-text); font-size: 14px; line-height: 1.35;
+  margin-bottom: 20px; max-width: 1000px;
+}
+.alert.show { display: flex; }
+.alert::before {
+  content: ""; flex: none; width: 18px; height: 18px; margin-top: 1px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23b3261e'/%3E%3Crect x='7.2' y='3.5' width='1.6' height='5.5' fill='%23fff'/%3E%3Crect x='7.2' y='10.6' width='1.6' height='1.8' fill='%23fff'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* ----- Вікно підтвердження ----- */
+.overlay {
+  position: fixed; inset: 0; background: rgba(27, 35, 48, .55);
+  display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px;
+}
+.overlay.show { display: flex; }
+.dialog {
+  background: #fff; border-radius: 8px; padding: 24px;
+  width: 100%; max-width: 440px; box-shadow: 0 10px 40px rgba(0, 0, 0, .3);
+}
+.dialog h2 { margin: 0 0 8px; font-size: 20px; }
+.dialog p { margin: 0 0 20px; color: var(--text-muted); }
+.dialog .actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+/* ----- Спливаючі повідомлення ----- */
+.toasts {
+  position: fixed; top: 76px; right: 24px; z-index: 60;
+  display: flex; flex-direction: column; gap: 10px; max-width: 380px;
+}
+.toast {
+  padding: 12px 16px; border-radius: 6px; font-size: 14px; line-height: 1.35;
+  background: #fff; border: 1px solid var(--border); border-left-width: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .15);
+}
+.toast.success { border-left-color: var(--ok); }
+.toast.error { border-left-color: var(--error); color: var(--error-text); background: var(--error-bg); }
+
+/* ===== Вузький екран ===== */
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .site-header { height: 56px; padding: 0 16px; }
+  .brand { font-size: 18px; }
+  .menu-btn { display: flex; }
+  .nav {
+    display: none; position: absolute; top: 56px; left: 0; right: 0; z-index: 40;
+    flex-direction: column; gap: 0; background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav.open { display: flex; }
+  .nav a { padding: 14px 16px; border-bottom: 1px solid #e6ebf3; }
+  .nav a.active { border-left: 4px solid var(--accent); font-weight: 600; }
+
+  main { padding: 16px; }
+  h1 { font-size: 22px; margin-bottom: 12px; }
+  .lead { font-size: 16px; }
+
+  .page-head { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 12px; }
+  .page-head .btn { height: 48px; font-size: 16px; }
+
+  .table { display: none; }
+  .cards { display: flex; padding-bottom: 130px; }
+
+  /* панель дій прилипає до низу екрана */
+  .toolbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0;
+    background: #fff; border-top: 1px solid var(--border);
+    padding: 10px 16px; display: grid; gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .toolbar .selected-info { grid-column: 1 / -1; order: -1; }
+  .toolbar .spacer { display: none; }
+  .toolbar .btn { padding: 0 4px; font-size: 14px; }
+  .toolbar #btnRefresh { grid-column: 1 / -1; }
+
+  .form-row { grid-template-columns: 1fr; gap: 4px; margin-bottom: 12px; }
+  .form-row label { font-size: 14px; padding-top: 0; }
+  .msg { font-size: 13px; padding-top: 0; }
+  .form-actions { flex-direction: column; }
+  .form-actions .btn { height: 48px; font-size: 16px; }
+  .form-actions .btn-primary { order: -1; }
+
+  .about-box .item { flex-direction: column; gap: 2px; }
+  .about-box dt { width: auto; }
+  .toasts { top: 64px; left: 16px; right: 16px; max-width: none; }
+}

@@ -13,11 +13,27 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+// CORS: дозволяємо вебсторінкам (Live Server) звертатися до API
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+                "http://127.0.0.1:5500",
+                "http://localhost:5500")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<PostingDbContext>();
 builder.Services.AddScoped<IPostingService, PostingService>();
 builder.Services.AddScoped<IPostingRepository, PostingRepository>();
 
 var app = builder.Build();
+
+// CORS: має бути до MapGet/MapPost/...
+app.UseCors();
 
 using (var scope = app.Services.CreateScope())
 {

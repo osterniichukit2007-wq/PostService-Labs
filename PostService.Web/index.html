@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PostService — Облік поштових відправлень</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">PostService</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Меню" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="2" fill="#1b2330"/>
+        <rect x="3" y="11" width="18" height="2" fill="#1b2330"/>
+        <rect x="3" y="17" width="18" height="2" fill="#1b2330"/>
+      </svg>
+    </button>
+    <nav class="nav" id="nav">
+      <a href="index.html" class="active">Головна</a>
+      <a href="posting-list.html">Відправлення</a>
+      <a href="about.html">Про програму</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Облік поштових відправлень</h1>
+    <p class="lead">
+      Вебзастосунок для роботи з поштовими відправленнями: перегляд списку,
+      створення нових, редагування та видалення.
+    </p>
+
+    <div class="home-cards">
+      <a class="home-card" href="posting-list.html">
+        <h2>Відправлення</h2>
+        <p>Список поштових відправлень, створення, редагування і видалення.</p>
+      </a>
+      <a class="home-card" href="about.html">
+        <h2>Про програму</h2>
+        <p>Призначення застосунку, версія та автор.</p>
+      </a>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initMenu } from './scripts/ui.js';
+    initMenu();
+  </script>
+</body>
+</html>
