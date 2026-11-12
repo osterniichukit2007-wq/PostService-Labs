@@ -1,11 +1,12 @@
-﻿using PostService.CommonTypes;
+﻿using System.Net;
+using PostService.CommonTypes;
 using PostService.Dtos;
 
 namespace PostService.Client
 {
     public partial class PostingList : Form
     {
-        private readonly PostingApiClient _api = new();
+        private readonly IPostServiceClient _postService = new PostServiceClient();
 
         public PostingList()
         {
@@ -51,27 +52,31 @@ namespace PostService.Client
 
         private async Task LoadPostingsAsync(int? selectId = null)
         {
-            try
+            while (true)
             {
-                var postings = await _api.GetListAsync();
-
-                gridPostings.DataSource = postings;
-                lblCount.Text = $"Усього відправлень: {postings.Length}";
-
-                if (selectId is not null)
+                try
                 {
-                    SelectRow(selectId.Value);
+                    var postings = await _postService.GetPostingsAsync();
+
+                    gridPostings.DataSource = postings;
+                    lblCount.Text = $"Усього відправлень: {postings.Length}";
+
+                    if (selectId is not null)
+                    {
+                        SelectRow(selectId.Value);
+                    }
+
+                    return;
                 }
-            }
-            catch (HttpRequestException)
-            {
-                MessageBox.Show(this, "Не вдалося отримати дані з сервера. Перевірте, чи запущено PostService.",
-                    "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (ApiException ex)
-            {
-                MessageBox.Show(this, $"Не вдалося отримати список. {ex.Message}",
-                    "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                catch (HttpRequestException ex) when (ex.StatusCode == null)
+                {
+                    // Сервер недоступний: пропонуємо повторити. Інші помилки не перехоплюємо —
+                    // їх оброблятиме глобальний обробник.
+                    if (!ErrorDialogs.AskRetry(this))
+                    {
+                        return;
+                    }
+                }
             }
         }
 
@@ -102,7 +107,7 @@ namespace PostService.Client
 
         private async void btnCreate_Click(object? sender, EventArgs e)
         {
-            using var dialog = new PostingEdit(_api);
+            using var dialog = new PostingEdit(_postService);
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 await LoadPostingsAsync();
@@ -117,7 +122,7 @@ namespace PostService.Client
                 return;
             }
 
-            using var dialog = new PostingEdit(_api, selected);
+            using var dialog = new PostingEdit(_postService, selected);
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 await LoadPostingsAsync(selected.Id);
@@ -149,19 +154,27 @@ namespace PostService.Client
                 return;
             }
 
-            try
+            while (true)
             {
-                await _api.DeleteAsync(selected.Id);
-            }
-            catch (ApiException ex)
-            {
-                MessageBox.Show(this, $"Не вдалося видалити відправлення. {ex.Message}",
-                    "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (HttpRequestException)
-            {
-                MessageBox.Show(this, "Немає зв'язку із сервером. Перевірте, чи запущено PostService.",
-                    "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    await _postService.DeletePostingAsync(selected.Id);
+                    break;
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // Запис уже видалено (наприклад, іншим користувачем): повідомляємо й оновлюємо список
+                    MessageBox.Show(this, "Вибране відправлення вже відсутнє. Список буде оновлено.",
+                        "Відправлення не знайдено", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == null)
+                {
+                    if (!ErrorDialogs.AskRetry(this))
+                    {
+                        return;
+                    }
+                }
             }
 
             await LoadPostingsAsync();

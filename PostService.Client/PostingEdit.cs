@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using PostService.CommonTypes;
 using PostService.Dtos;
 
@@ -18,15 +19,15 @@ internal sealed record DeliveryItem(DeliveryType Value, string Title);
 
 public partial class PostingEdit : Form
 {
-    private readonly PostingApiClient _api;
+    private readonly IPostServiceClient _postService;
     private readonly PostingGetDto? _editing;
     private readonly ErrorProvider _errors = new() { BlinkStyle = ErrorBlinkStyle.NeverBlink };
 
-    public PostingEdit(PostingApiClient api, PostingGetDto? editing = null)
+    public PostingEdit(IPostServiceClient postService, PostingGetDto? editing = null)
     {
         InitializeComponent();
 
-        _api = api;
+        _postService = postService;
         _editing = editing;
 
         var items = Enum.GetValues<DeliveryType>()
@@ -162,53 +163,84 @@ public partial class PostingEdit : Form
         var to = txtTo.Text.Trim();
         var content = txtContent.Text.Trim();
 
+        PostingPostDto? newPosting = null;
+        PostingPutDto? changedPosting = null;
+
+        if (_editing is null)
+        {
+            newPosting = new PostingPostDto
+            {
+                From = from,
+                To = to,
+                Content = content,
+                DeliveryType = deliveryType,
+                Weight = weight,
+                Width = width,
+                Height = height,
+                Depth = depth,
+                Value = value
+            };
+        }
+        else
+        {
+            changedPosting = new PostingPutDto
+            {
+                Id = _editing.Id,
+                From = from,
+                To = to,
+                Content = content,
+                DeliveryType = deliveryType,
+                Weight = weight,
+                Width = width,
+                Height = height,
+                Depth = depth,
+                Value = value,
+                Price = _editing.Price
+            };
+        }
+
         btnSave.Enabled = false;
         try
         {
-            if (_editing is null)
+            while (true)
             {
-                await _api.CreateAsync(new PostingPostDto
+                try
                 {
-                    From = from,
-                    To = to,
-                    Content = content,
-                    DeliveryType = deliveryType,
-                    Weight = weight,
-                    Width = width,
-                    Height = height,
-                    Depth = depth,
-                    Value = value
-                });
-            }
-            else
-            {
-                await _api.UpdateAsync(new PostingPutDto
-                {
-                    Id = _editing.Id,
-                    From = from,
-                    To = to,
-                    Content = content,
-                    DeliveryType = deliveryType,
-                    Weight = weight,
-                    Width = width,
-                    Height = height,
-                    Depth = depth,
-                    Value = value,
-                    Price = _editing.Price
-                });
-            }
+                    if (newPosting is not null)
+                    {
+                        await _postService.CreatePostingAsync(newPosting);
+                    }
+                    else
+                    {
+                        await _postService.UpdatePostingAsync(_editing!.Id, changedPosting!);
+                    }
 
+                    DialogResult = DialogResult.OK;
+                    return;
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == null)
+                {
+                    // Сервер недоступний: пропонуємо повторити, інакше форма лишається відкритою
+                    if (!ErrorDialogs.AskRetry(this))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+        catch (PostingValidationException ex)
+        {
+            // Сервер відхилив дані: показуємо всі помилки, форма залишається відкритою
+            var messages = ex.Errors.SelectMany(field => field.Value);
+            MessageBox.Show(this, string.Join(Environment.NewLine, messages),
+                "Перевірте введені дані", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            // Запис уже видалено: повідомляємо, закриваємо форму, список оновиться
+            MessageBox.Show(this, "Це відправлення вже видалено. Список буде оновлено.",
+                "Відправлення не знайдено", MessageBoxButtons.OK, MessageBoxIcon.Information);
             DialogResult = DialogResult.OK;
-        }
-        catch (ApiException ex)
-        {
-            MessageBox.Show(this, $"Не вдалося зберегти відправлення. {ex.Message}",
-                "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        catch (HttpRequestException)
-        {
-            MessageBox.Show(this, "Немає зв'язку із сервером. Перевірте, чи запущено PostService.",
-                "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
         {

@@ -41,6 +41,34 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
+// Перевірка даних відправлення. Повертає словник «поле -> повідомлення»,
+// порожній словник означає, що дані коректні.
+static Dictionary<string, string[]> ValidatePosting(
+    string from, string to, string content,
+    double weight, double width, double height, double depth, double value)
+{
+    var errors = new Dictionary<string, string[]>();
+
+    if (string.IsNullOrWhiteSpace(from))
+        errors["From"] = new[] { "Вкажіть відправника: ім'я та прізвище." };
+    if (string.IsNullOrWhiteSpace(to))
+        errors["To"] = new[] { "Вкажіть отримувача: ім'я та прізвище." };
+    if (string.IsNullOrWhiteSpace(content))
+        errors["Content"] = new[] { "Вкажіть вміст відправлення." };
+    if (weight <= 0)
+        errors["Weight"] = new[] { "Вага має бути більшою за 0 кг." };
+    if (width <= 0)
+        errors["Width"] = new[] { "Ширина має бути більшою за 0 см." };
+    if (height <= 0)
+        errors["Height"] = new[] { "Висота має бути більшою за 0 см." };
+    if (depth <= 0)
+        errors["Depth"] = new[] { "Глибина має бути більшою за 0 см." };
+    if (value < 0)
+        errors["Value"] = new[] { "Оголошена цінність не може бути від'ємною." };
+
+    return errors;
+}
+
 app.MapGet("/postings", (IPostingService postingService) =>
 {
     var postings = postingService.GetAll();
@@ -60,6 +88,12 @@ app.MapGet("/postings/{id}", (int id, IPostingService postingService) =>
 
 app.MapPost("/postings", (PostingPostDto postDto, IPostingService postingService) =>
 {
+    var errors = ValidatePosting(
+        postDto.From, postDto.To, postDto.Content,
+        postDto.Weight, postDto.Width, postDto.Height, postDto.Depth, postDto.Value);
+    if (errors.Count > 0)
+        return Results.ValidationProblem(errors);
+
     var newPosting = PostingMapper.ToPosting(postDto);
     var savedObject = postingService.Create(newPosting);
     var resultDto = PostingMapper.ToPostingGetDto(savedObject);
@@ -68,6 +102,12 @@ app.MapPost("/postings", (PostingPostDto postDto, IPostingService postingService
 
 app.MapPut("/postings/{id}", (int id, PostingPutDto putDto, IPostingService postingService) =>
 {
+    var errors = ValidatePosting(
+        putDto.From, putDto.To, putDto.Content,
+        putDto.Weight, putDto.Width, putDto.Height, putDto.Depth, putDto.Value);
+    if (errors.Count > 0)
+        return Results.ValidationProblem(errors);
+
     putDto.Id = id;
     var posting = PostingMapper.ToPosting(putDto);
     var updated = postingService.Update(posting);

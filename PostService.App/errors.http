@@ -1,0 +1,60 @@
+@host = http://localhost:5077
+
+### 1. Список (все добре)
+GET {{host}}/postings
+
+### 2. Відправлення не існує (GET)
+GET {{host}}/postings/9999
+
+### 3. Видалення неіснуючого відправлення
+DELETE {{host}}/postings/9999
+
+### 4. Редагування неіснуючого відправлення
+PUT {{host}}/postings/9999
+Content-Type: application/json
+
+{
+  "id": 9999,
+  "from": "Іван Петренко",
+  "to": "Олена Коваль",
+  "content": "Документи",
+  "deliveryType": "Department",
+  "weight": 1,
+  "width": 10,
+  "height": 10,
+  "depth": 10,
+  "value": 0,
+  "price": 10
+}
+
+### 5. Некоректні дані (порожні поля, нульова та від'ємна вага)
+POST {{host}}/postings
+Content-Type: application/json
+
+{
+  "from": "",
+  "to": "",
+  "content": "",
+  "deliveryType": "Department",
+  "weight": -1,
+  "width": 0,
+  "height": 0,
+  "depth": 0,
+  "value": 0
+}
+
+### 6. Невідомий тип доставки
+POST {{host}}/postings
+Content-Type: application/json
+
+{
+  "from": "Іван Петренко",
+  "to": "Олена Коваль",
+  "content": "Документи",
+  "deliveryType": "Teleport",
+  "weight": 1,
+  "width": 10,
+  "height": 10,
+  "depth": 10,
+  "value": 0
+}
