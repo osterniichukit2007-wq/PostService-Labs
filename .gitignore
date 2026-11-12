@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+!PostService.App/
+PostService.App/PostingDb.db
