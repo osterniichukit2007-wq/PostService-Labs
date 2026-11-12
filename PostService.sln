@@ -15,13 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostService.BusinessLogic",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostService.DataAccess", "PostService.DataAccess\PostService.DataAccess.csproj", "{3458ECAF-C134-4A39-92BD-3039EA167E67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostService.Client", "PostService.Client\PostService.Client.csproj", "{1CC2D96F-EAF3-42AA-B8EF-E2BF7CEB6FF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0D29C48C-8460-4283-AC29-EBC475C6F7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -48,5 +47,12 @@ Global
 		{3458ECAF-C134-4A39-92BD-3039EA167E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3458ECAF-C134-4A39-92BD-3039EA167E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3458ECAF-C134-4A39-92BD-3039EA167E67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CC2D96F-EAF3-42AA-B8EF-E2BF7CEB6FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CC2D96F-EAF3-42AA-B8EF-E2BF7CEB6FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CC2D96F-EAF3-42AA-B8EF-E2BF7CEB6FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CC2D96F-EAF3-42AA-B8EF-E2BF7CEB6FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

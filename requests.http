@@ -12,8 +12,8 @@ POST http://localhost:5077/postings
 Content-Type: application/json
 
 {
-  "from": "Ivan",
-  "to": "Olena",
+  "from": "Petro",
+  "to": "Maria",
   "content": "Documents",
   "deliveryType": "Department",
   "weight": 0.5,
